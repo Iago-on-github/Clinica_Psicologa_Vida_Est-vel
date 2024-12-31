@@ -1,0 +1,1 @@
+ALTER TABLE tb_patient ADD COLUMN IF NOT EXISTS active boolean DEFAULT true;
