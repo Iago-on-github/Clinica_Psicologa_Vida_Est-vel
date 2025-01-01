@@ -31,11 +31,15 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/signing", "auth/refresh", "/api-docs/**", "/swagger-ui/html", "/swagger-ui**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/users").denyAll())
-                .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
+                        .requestMatchers(
+                                "/auth/signing",
+                                "/auth/refresh",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**" ).permitAll()
+                        .anyRequest().authenticated());
         return http.build();
     }
 

@@ -47,14 +47,4 @@ public class CapturingExceptions {
                 e.getMessage(),
                 http.getRequestURI()));
     }
-
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<StandardError> tokenExpiredException(TokenExpiredException e, HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new StandardError(
-                LocalDateTime.now(),
-                HttpStatus.FORBIDDEN.value(),
-                e.getMessage(),
-                request.getRequestURI()
-        ));
-    }
 }
