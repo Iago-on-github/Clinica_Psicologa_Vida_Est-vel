@@ -4,6 +4,7 @@ import br.com.psicoclinic.Models.AppointmentHistory;
 import br.com.psicoclinic.Models.Dtos.AppointmentHistoryDto;
 import br.com.psicoclinic.Models.Dtos.AppointmentSchedulingDto;
 import br.com.psicoclinic.Service.AppointmentHistoryService;
+import br.com.psicoclinic.util.mediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +26,11 @@ public class AppointmentHistoryResources {
         this.appointmentHistoryService = appointmentHistoryService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get Appointment History",
             description = "Get Appointment History By Patient Id",
             tags = {"AppointmentHistoryDto"},

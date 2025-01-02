@@ -1,8 +1,8 @@
 package br.com.psicoclinic.Resources;
 
 import br.com.psicoclinic.Data.UploadFileDto;
-import br.com.psicoclinic.Models.Dtos.ResponsePatientDto;
 import br.com.psicoclinic.Service.FileStorageService;
+import br.com.psicoclinic.util.mediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,7 +63,11 @@ public class FileStorageResources {
         return Arrays.stream(files).map(this::uploadFile).toList();
     }
 
-    @GetMapping("/downloadFile/{filename:.+}")
+    @GetMapping(value = "/downloadFile/{filename:.+}", produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML,
+    })
     @Operation(summary = "Download File",
             description = "Method for Download File",
             tags = {"Resource"},

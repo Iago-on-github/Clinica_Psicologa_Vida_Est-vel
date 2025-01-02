@@ -1,8 +1,8 @@
 package br.com.psicoclinic.Resources;
 
 import br.com.psicoclinic.Models.Dtos.ResponsePatientDto;
-import br.com.psicoclinic.Models.Patient;
 import br.com.psicoclinic.Service.PatientService;
+import br.com.psicoclinic.util.mediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +26,11 @@ public class PatientResources {
         this.patientService = patientService;
     }
 
-    @GetMapping
+    @GetMapping(produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get All Patients",
     description = "Get all active patients",
     tags = {"ResponsePatientDto"},
@@ -43,7 +47,11 @@ public class PatientResources {
         return ResponseEntity.ok().body(patientService.getAllPatients());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get Patient By Id",
             description = "Get active Patient by id",
             tags = {"ResponsePatientDto"},

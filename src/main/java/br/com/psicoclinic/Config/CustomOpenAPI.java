@@ -15,7 +15,7 @@ public class CustomOpenAPI {
                         .title("Psycho_Clinic")
                         .version("v1")
                         .description("For 5 years, Psycho_Clinic has been helping many patients of all ages.")
-                        .license(new License().name("Apache 20")
+                        .license(new License().name("Apache 2.0")
                                 .url("http://localhost:8080/teste")));
 
     }

@@ -5,6 +5,7 @@ import br.com.psicoclinic.Models.Dtos.AppointmentSchedulingDto;
 import br.com.psicoclinic.Models.Dtos.ResponseDoctorDto;
 import br.com.psicoclinic.Models.Dtos.ResponsePatientDto;
 import br.com.psicoclinic.Service.AppointmentSchedulingService;
+import br.com.psicoclinic.util.mediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,7 +43,11 @@ public class AppointmentSchedulingResources {
         return ResponseEntity.created(uri).body(appointmentSchedulingService.create(dto));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get Active Appointments",
             description = "Get active appointments by patient id",
             tags = {"AppointmentSchedulingDto"},

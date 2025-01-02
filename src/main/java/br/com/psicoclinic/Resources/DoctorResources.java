@@ -6,6 +6,7 @@ import br.com.psicoclinic.Models.Dtos.ResponseDoctorDtoWithHateoasLinks;
 import br.com.psicoclinic.Models.Dtos.ResponsePatientDto;
 import br.com.psicoclinic.Models.Enumn.Speciality;
 import br.com.psicoclinic.Service.DoctorService;
+import br.com.psicoclinic.util.mediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +29,11 @@ public class DoctorResources {
     public DoctorResources(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
-    @GetMapping
+    @GetMapping(produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get All Doctors",
             description = "Get all active Doctors",
             tags = {"ResponseDoctorDtoWithHateoasLinks"},
@@ -45,7 +50,11 @@ public class DoctorResources {
         return ResponseEntity.ok().body(doctorService.getAllDoctors());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get Doctor by id",
             description = "Get active Doctor by id",
             tags = {"ResponseDoctorDto"},
@@ -62,7 +71,11 @@ public class DoctorResources {
         return ResponseEntity.ok().body(doctorService.getDoctorById(id));
     }
 
-    @GetMapping("/speciality/")
+    @GetMapping(value = "/speciality/", produces = {
+            mediaType.APPLICATION_JSON,
+            mediaType.APPLICATION_XML,
+            mediaType.APPLICATION_YAML
+    })
     @Operation(summary = "Get Doctor by id",
             description = "Get active Doctor by id",
             tags = {"ResponseDoctorDtoWithHateoasLinks"},
