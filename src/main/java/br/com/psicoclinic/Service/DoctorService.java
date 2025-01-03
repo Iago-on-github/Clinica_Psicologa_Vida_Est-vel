@@ -9,6 +9,12 @@ import br.com.psicoclinic.Models.Enumn.Speciality;
 import br.com.psicoclinic.Repositories.DoctorRepository;
 import br.com.psicoclinic.Resources.DoctorResources;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,33 +28,36 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Service
 public class DoctorService {
     private final DoctorRepository doctorRepository;
+    private final PagedResourcesAssembler<ResponseDoctorDtoWithHateoasLinks> assembler;
     @Autowired
-    public DoctorService(DoctorRepository doctorsRepository) {
+    public DoctorService(DoctorRepository doctorsRepository, PagedResourcesAssembler<ResponseDoctorDtoWithHateoasLinks> assembler) {
         this.doctorRepository = doctorsRepository;
+        this.assembler = assembler;
     }
 
-    public List<ResponseDoctorDtoWithHateoasLinks> getAllDoctors() {
-        var doctors = doctorRepository.findAll();
+    public PagedModel<EntityModel<ResponseDoctorDtoWithHateoasLinks>> getAllDoctors(Pageable pageable) {
+        Page<Doctor> doctors = doctorRepository.findAll(pageable);
 
-        doctors.forEach(doctor -> doctor.add(linkTo(methodOn(DoctorResources.class).getDoctorById(doctor.getDoctorId())).withSelfRel()));
-
-        return doctors.stream().map(d -> new ResponseDoctorDtoWithHateoasLinks(
-                d.getDoctorId(),
-                d.getName(),
-                d.getSpeciality(),
-                d.getGender(),
-                d.getCrm(),
-                d.getDescription(),
-                d.getAppointments()
-                        .stream().map(a -> new AppointmentResponseDto(
+        Page<ResponseDoctorDtoWithHateoasLinks> doctorDto = doctors
+                .map(d -> new ResponseDoctorDtoWithHateoasLinks(
+                        d.getDoctorId(),
+                        d.getName(),
+                        d.getSpeciality(),
+                        d.getGender(),
+                        d.getCrm(),
+                        d.getDescription(),
+                        d.getAppointments().stream().map(a -> new AppointmentResponseDto(
                                 a.getSchedulingId(),
                                 a.getPatient().getName(),
                                 a.getDoctor().getName(),
                                 a.getScheduledTimeFor(),
-                                a.getActive())).collect(Collectors.toList()),
-                d.isActive(),
-                d.getLinks())
-        ).toList();
+                                a.getActive()
+                        )).toList(),
+                        d.isActive(),
+                        Links.of(linkTo(methodOn(DoctorResources.class)
+                                .getDoctorById(d.getDoctorId())).withSelfRel())));
+
+        return assembler.toModel(doctorDto);
     }
 
     public ResponseDoctorDto getDoctorById(Long id) {

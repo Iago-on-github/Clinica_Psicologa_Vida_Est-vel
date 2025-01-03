@@ -5,7 +5,10 @@ import br.com.psicoclinic.Exceptions.PatientWithNoAppointmentHistory;
 import br.com.psicoclinic.Models.AppointmentScheduling;
 import br.com.psicoclinic.Models.Dtos.AppointmentHistoryDto;
 import br.com.psicoclinic.Repositories.AppointmentHistoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,19 +22,19 @@ public class AppointmentHistoryService {
         this.appointmentHistoryRepository = appointmentHistoryRepository;
     }
 
-    public List<AppointmentHistoryDto> getHistoryByPatientId(Long id) {
-        var appointments = appointmentHistoryRepository.findByPatientId(id);
+    public Page<AppointmentHistoryDto> getHistoryByPatientId(Long id, Pageable pageable) {
+        var appointments = appointmentHistoryRepository.findByPatientId(id, pageable);
 
         if (appointments.isEmpty()) throw new PatientWithNoAppointmentHistory("No appointments history about this patient.");
 
         appointments.stream()
                 .filter(p -> p.getScheduledTimeFor().isBefore(LocalDateTime.now())).toList();
 
-        return appointments.stream().map(p -> new AppointmentHistoryDto(
+        return appointments.map(p -> new AppointmentHistoryDto(
                 p.getHistoryId(),
                 p.getScheduledTimeFor(),
                 p.getEndTime(),
                 p.getDoctor().getName(),
-                p.getPatient().getName())).toList();
+                p.getPatient().getName()));
     }
 }

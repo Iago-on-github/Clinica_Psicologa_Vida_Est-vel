@@ -9,11 +9,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,7 +44,15 @@ public class AppointmentHistoryResources {
                     @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content)
             })
-    public ResponseEntity<List<AppointmentHistoryDto>> getAppointmentHistoryByPatientId(@PathVariable Long id) {
-        return ResponseEntity.ok().body(appointmentHistoryService.getHistoryByPatientId(id));
+    public ResponseEntity<Page<AppointmentHistoryDto>> getAppointmentHistoryByPatientId(@RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                                                        @RequestParam(value = "limit", defaultValue = "5") Integer limit,
+                                                                                        @RequestParam(value = "description", defaultValue = "asc") String description,
+                                                                                        @PathVariable Long id) {
+
+        var sortDirection = "desc".equalsIgnoreCase(description) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "historyId"));
+
+        return ResponseEntity.ok().body(appointmentHistoryService.getHistoryByPatientId(id, pageable));
     }
 }

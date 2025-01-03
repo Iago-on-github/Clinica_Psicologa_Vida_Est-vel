@@ -8,6 +8,8 @@ import br.com.psicoclinic.Models.Patient;
 import br.com.psicoclinic.Repositories.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +23,27 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
-    public List<ResponsePatientDto> getAllPatients() {
-        var patient = patientRepository.findAll();
+    public Page<ResponsePatientDto> getAllPatients(Pageable pageable) {
+        var patient = patientRepository.findAll(pageable);
+
+        return patient.map(p -> new ResponsePatientDto(
+                        p.getPatient_id(),
+                        p.getName(),
+                        p.getAge(),
+                        p.getGender(),
+                        p.getDescription(),
+                        p.getAppointments()
+                                .stream().map(a -> new AppointmentResponseDto(
+                                        a.getSchedulingId(),
+                                        a.getPatient().getName(),
+                                        a.getDoctor().getName(),
+                                        a.getScheduledTimeFor(),
+                                        a.getActive())).toList(),
+                        p.isActive()));
+    }
+
+    public List<ResponsePatientDto> getAllActivePatients() {
+        var patient = patientRepository.findByActiveTrue();
 
         return patient.stream()
                 .map(p -> new ResponsePatientDto(

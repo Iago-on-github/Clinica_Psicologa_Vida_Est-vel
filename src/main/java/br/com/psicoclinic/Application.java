@@ -16,4 +16,4 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 }
- //
+ // Fazer a dockerização da aplicação e fazer o front end

@@ -16,6 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +43,19 @@ class PatientServiceTest {
         @Test
         @DisplayName("Should return all active patients with success")
         void ShouldReturnAllPatientWithSuccess() {
-            List<Patient> patients = new ArrayList<>();
-            patients.add(new Patient(1L, "name2", 18, 'M', "desc", true));
-            patients.add(new Patient(2L, "name", 19, 'F', "desc", true));
-            patients.add(new Patient(3L, "name3", 20, 'F', "desc", true));
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Patient> patients = new PageImpl<>(List.of(
+                    new Patient(1L, "name2", 18, 'M', "desc", true),
+                    new Patient(2L, "name", 19, 'F', "desc", true),
+                    new Patient(3L, "name3", 20, 'F', "desc", true)));
 
-            when(patientRepository.findAll()).thenReturn(patients);
 
-            List<ResponsePatientDto> output = patientService.getAllPatients();
+            when(patientRepository.findAll(pageable)).thenReturn(patients);
+
+            Page<ResponsePatientDto> output = patientService.getAllPatients(pageable);
 
             assertNotNull(output);
-            assertEquals(patients.size(), output.size());
+            assertEquals(patients.getContent().size(), output.getContent().size());
 
             assertEquals(
                     patients.stream().map(Patient::getPatient_id).toList(),
@@ -65,11 +71,13 @@ class PatientServiceTest {
         @Test
         @DisplayName("Throws exception when error occurs in get all active patients")
         void ThrowsExceptionWhenErrorOccursInGetAllPatients() {
-            when(patientRepository.findAll()).thenThrow(new RuntimeException());
+            Pageable pageable = PageRequest.of(0, 10);
 
-            assertThrows(RuntimeException.class, () -> patientService.getAllPatients());
+            when(patientRepository.findAll(pageable)).thenThrow(new RuntimeException());
 
-            verify(patientRepository).findAll();
+            assertThrows(RuntimeException.class, () -> patientService.getAllPatients(pageable));
+
+            verify(patientRepository).findAll(pageable);
         }
     }
 

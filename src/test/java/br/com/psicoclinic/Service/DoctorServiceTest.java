@@ -5,9 +5,11 @@ import br.com.psicoclinic.Models.AppointmentScheduling;
 import br.com.psicoclinic.Models.Doctor;
 import br.com.psicoclinic.Models.Dtos.AppointmentResponseDto;
 import br.com.psicoclinic.Models.Dtos.ResponseDoctorDto;
+import br.com.psicoclinic.Models.Dtos.ResponseDoctorDtoWithHateoasLinks;
 import br.com.psicoclinic.Models.Enumn.Speciality;
 import br.com.psicoclinic.Models.Patient;
 import br.com.psicoclinic.Repositories.DoctorRepository;
+import br.com.psicoclinic.Resources.DoctorResources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,13 +18,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @ExtendWith(MockitoExtension.class)
 class DoctorServiceTest {
@@ -30,6 +44,8 @@ class DoctorServiceTest {
     private DoctorService doctorService;
     @Mock
     private DoctorRepository doctorRepository;
+    @Mock
+    private PagedResourcesAssembler<ResponseDoctorDtoWithHateoasLinks> assembler;
     private Doctor doctor;
     private ResponseDoctorDto doctorDto;
 
@@ -44,12 +60,45 @@ class DoctorServiceTest {
         @Test
         @DisplayName("Should return all Active Doctors")
         void ShouldReturnAllActiveDoctorsWithSuccess() {
-            when(doctorRepository.findAll()).thenReturn(List.of(doctor));
+            Pageable pageable = PageRequest.of(0, 10);
 
-            List<ResponseDoctorDto> output = doctorService.getAllDoctors();
+            List<EntityModel<ResponseDoctorDtoWithHateoasLinks>> doctorEntityModels = List.of(
+                    EntityModel.of(
+                            new ResponseDoctorDtoWithHateoasLinks(
+                                    doctor.getDoctorId(),
+                                    doctor.getName(),
+                                    doctor.getSpeciality(),
+                                    doctor.getGender(),
+                                    doctor.getCrm(),
+                                    doctor.getDescription(),
+                                    doctor.getAppointments().stream().map(
+                                            a -> new AppointmentResponseDto(
+                                                    a.getSchedulingId(),
+                                                    a.getPatient().getName(),
+                                                    a.getDoctor().getName(),
+                                                    a.getScheduledTimeFor(),
+                                                    a.getActive())).toList(),
+                                    doctor.isActive(),
+                                    doctor.getLinks()
+                            ),
+                            Link.of("/doctors/" + doctor.getDoctorId()).withSelfRel()
+                    )
+            );
+
+            Page<Doctor> doctors = new PageImpl<>(List.of(doctor));
+            when(doctorRepository.findAll(pageable)).thenReturn(doctors);
+
+            PagedModel<EntityModel<ResponseDoctorDtoWithHateoasLinks>> mockPagedModel =
+                    PagedModel.of(doctorEntityModels, new PagedModel.PageMetadata(1, 0, 10));
+
+            when(assembler.toModel(any(Page.class))).thenReturn(mockPagedModel);
+
+            PagedModel<EntityModel<ResponseDoctorDtoWithHateoasLinks>> output =
+                    doctorService.getAllDoctors(pageable);
+
 
             assertNotNull(output);
-            assertEquals(1, output.size());
+            assertEquals(1, output.getContent().size());
 
             assertEquals(1L, doctor.getDoctorId());
             assertEquals("Doctor", doctor.getName());
@@ -66,9 +115,10 @@ class DoctorServiceTest {
         @Test
         @DisplayName("Throws Exception When Error Occurs in Get All Active Doctors")
         void ThrowsExceptionWhenErrorOccursInGetAllActiveDoctors() {
+            Pageable pageable = PageRequest.of(0, 10);
             when(doctorRepository.findAll()).thenThrow(new RuntimeException());
 
-            assertThrows(RuntimeException.class, () -> doctorService.getAllDoctors());
+            assertThrows(RuntimeException.class, () -> doctorService.getAllDoctors(pageable));
         }
 
     }
@@ -147,7 +197,7 @@ class DoctorServiceTest {
                     "135453",
                     "Experience with infantil psycholigy",
                     null,
-                    true, doctor.getLinks());
+                    true);
 
             Doctor doctor = new Doctor();
             doctor.setName(doctorDto.name());
@@ -188,7 +238,7 @@ class DoctorServiceTest {
                     "135453",
                     "Experience with infantil psycholigy",
                     null,
-                    true, doctor.getLinks());
+                    true);
             when(doctorRepository.save(any(Doctor.class))).thenThrow(new RuntimeException());
 
             assertThrows(RuntimeException.class, () -> doctorService.createDoctor(doctorDto));
@@ -329,6 +379,6 @@ class DoctorServiceTest {
                         a.getDoctor().getName(),
                         a.getScheduledTimeFor(),
                         a.getActive())).toList(),
-                true, doctor.getLinks());
+                true);
     }
 }
