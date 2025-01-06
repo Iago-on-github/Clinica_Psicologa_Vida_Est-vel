@@ -1,0 +1,4 @@
+# Ignore other unnecessary files
+*.md
+.git
+!.mvn/wrapper/maven-wrapper.jar
