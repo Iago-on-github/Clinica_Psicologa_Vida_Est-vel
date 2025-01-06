@@ -8,10 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 public class Permissions implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private long id;
     private String description;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 

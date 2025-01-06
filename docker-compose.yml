@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15.3
+    container_name: postgres_db_clinica_psicologa
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: psico_clinic_database
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - springboot-network
+
+  app:
+    image: docker-image-clinica-psicologa:latest
+    container_name: clinica-psicologa-app
+    build: .
+    working_dir: /app
+    command: mvn spring-boot:run
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/psico_clinic_database
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123
+    ports:
+      - 8080:8080
+    volumes:
+      - ./db/migration:/app/db/migration
+    depends_on:
+      - db
+    networks:
+      - springboot-network
+
+volumes:
+  postgres_data:
+
+networks:
+  springboot-network:
+    driver: bridge

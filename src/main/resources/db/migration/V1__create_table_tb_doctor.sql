@@ -1,4 +1,4 @@
-CREATE TABLE tb_doctor (
+CREATE TABLE IF NOT EXISTS tb_doctor (
     doctor_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     speciality VARCHAR(100) NOT NULL,
