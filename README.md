@@ -1,6 +1,5 @@
 # Clínica Psicológica Vida Estável
-
-![Logo da Clínica]![image](https://github.com/user-attachments/assets/7f150f33-5b1f-4741-b80c-359a6dac7cce)
+![image](https://github.com/user-attachments/assets/7f150f33-5b1f-4741-b80c-359a6dac7cce)
 
 
 ## Descrição
