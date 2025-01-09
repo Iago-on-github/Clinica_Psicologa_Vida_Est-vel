@@ -1,6 +1,6 @@
 # Clínica Psicológica Vida Estável
 
-![Logo da Clínica]([link-para-a-imagem-do-logo](https://www.google.com/imgres?q=img%20logo%20clinica%20psicologia%20vida%20estavel&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fti%2Fvetor-gratis%2Fp1%2F49184304-arvore-do-vida-logotipo-simbolo-do-beleza-crescimento-forca-saude-icone-silhueta-plantar-natureza-folha-preto-verde-organico-meio-ambiente-vetor.jpg&imgrefurl=https%3A%2F%2Fpt.vecteezy.com%2Farte-vetorial%2F49184304-arvore-do-vida-logotipo-simbolo-do-beleza-crescimento-forca-saude-icone-silhueta-plantar-natureza-folha-preto-verde-organico-meio-ambiente&docid=4bxf6ezw_cauYM&tbnid=KyKosq0F6HjH7M&vet=12ahUKEwi2t4Kh0emKAxXLrJUCHRhBLS4QM3oECD4QAA..i&w=1723&h=980&hcb=2&ved=2ahUKEwi2t4Kh0emKAxXLrJUCHRhBLS4QM3oECD4QAA)) <!-- Adicione um link para a imagem do logo da clínica, se houver -->
+![Logo da Clínica](https://static.vecteezy.com/ti/vetor-gratis/p1/49184304-arvore-do-vida-logotipo-simbolo-do-beleza-crescimento-forca-saude-icone-silhueta-plantar-natureza-folha-preto-verde-organico-meio-ambiente-vetor.jpg)
 
 ## Descrição
 
