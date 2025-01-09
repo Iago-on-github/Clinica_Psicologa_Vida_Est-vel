@@ -4,18 +4,21 @@
 
 ## Descrição
 
-O projeto **Clínica Psicológica - Vida Estável** é uma aplicação desenvolvida para gerenciar as atividades de uma clínica de psicologia. O sistema permite o agendamento de consultas e o gerenciamento de pacientes e profissionais.
+O projeto **Clínica Psicológica - Vida Estável** é uma aplicação desenvolvida para gerenciar as atividades de uma clínica de psicologia. O sistema permite o agendamento de consultas com tempo de expiração e o gerenciamento de pacientes e profissionais.
 
 ## Funcionalidades
 
 - **Cadastro de Pacientes**: Permite o registro de informações dos pacientes, incluindo dados pessoais.
 - **Agendamento de Consultas**: Facilita o agendamento de consultas entre pacientes e psicólogos, com opções de visualização de horários disponíveis, busca por especialidade médica e etc.
-- **Gerenciamento de Profissionais**: Cadastro e gerenciamento de psicólogos, incluindo especializações, horários de atendimento.
+- **Gerenciamento de Profissionais**: Cadastro e gerenciamento de psicólogos, incluindo especializações, horários de atendimento (1h por paciente).
 - **Relatórios**: Geração de relatórios sobre atendimentos realizados, pacientes ativos e estatísticas de agendamentos.
+- **Validação de Marcação de Consultas**:  Consultas só poderão ser agendadas caso atendam às regras de negócio. (disponibilidade médica, dias e horários úteis)
+- **Upload/Download de arquivos**: Relatórios das consultas poderão ser enviados e baixados através de arquivos PDF.
+- **Content Negotiation**: Usuários poderão fazer requisições em diferentes tipos de dados (Json, Xml ou Yaml).
 
 ## Tecnologias Utilizadas
 
-- **Backend**: Java, Spring Boot, Spring Security, Flyway, Swagger, Docker.
+- **Backend**: Java, Spring Boot, Spring Security, Flyway, JUnit5, Mockito, Swagger, Docker, Hibernate, Apache Maven.
 - **Banco de Dados**: PostgreSQL.
 - **Outras Tecnologias**: JacksonDataFormat, Hateoas, Auth0.
 
